@@ -46,8 +46,8 @@
     #   ignore_errors: yes
     
     - name: Stop existing container
-      command: "docker stop {{ running_container_name.stdout }}"
-      when: running_container_name.stdout is defined
+      command: "docker stop {{ running_container_info.ansible_facts.docker_container_info.Id }}"
+      when: running_container_info.ansible_facts.docker_container_info.Id is defined
 
     # - name: Wait for existing container to be stopped
     #   command: "docker wait {{ container_name }}"
@@ -60,13 +60,13 @@
     # - name: Start the new container
     #   command: "docker run --name {{ container_name }} -d -p 8088:80 pardhuguttula/ansible:{{ DOCKER_TAG }}"
 
-    # - name: Start the new container
-    #   command: "docker run --name {{ container_name_start }} -d -p 8088:80 pardhuguttula/ansible:{{ DOCKER_TAG }}"
-
     - name: Start the new container
-      docker_container:
-        name: "{{ container_name_start }}"
-        image: "pardhuguttula/ansible:{{DOCKER_TAG}}"
-        state: started
-        published_ports:
-          - 0.0.0.0:8088:80
+      command: "docker run --name {{ container_name_start }} -d -p 8088:80 pardhuguttula/ansible:{{ DOCKER_TAG }}"
+
+    # - name: Start the new container
+    #   docker_container:
+    #     name: "{{ container_name_start }}"
+    #     image: "pardhuguttula/ansible:{{DOCKER_TAG}}"
+    #     state: started
+    #     published_ports:
+    #       - 0.0.0.0:8088:80
