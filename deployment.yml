@@ -23,15 +23,14 @@
         name: docker-py
         state: present
 
-    - name: Stop existing container
-      command: "docker stop ansible"
-      ignore_errors: yes
+    - name: Generate unique container name
+      set_fact:
+        container_name: "ansible_{{ DOCKER_TAG }}"
+
+    # - name: Stop existing container
+    #   command: "docker stop ansible{{DOCKER_TAG}}"
+    #   ignore_errors: yes
 
     
-    - name: Start the container
-      docker_container:
-        name: ansible
-        image: "pardhuguttula/ansible:{{DOCKER_TAG}}"
-        state: started
-        published_ports:
-          - 0.0.0.0:8088:80
+    - name: Start the new container
+      command: "docker run --name {{ container_name }} -d -p 8088:80 pardhuguttula/ansible:{{ DOCKER_TAG }}"
