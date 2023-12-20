@@ -44,10 +44,14 @@
     # - name: Stop existing container
     #   command: "docker stop {{ container_name }}"
     #   ignore_errors: yes
-    
+    - name: Debug information about running_container_info
+      debug:
+        var: running_container_info
+
+
     - name: Stop existing container
       command: "docker stop {{ running_container_info.ansible_facts.docker_container_info.Id }}"
-      when: running_container_info.ansible_facts.docker_container_info.Id is defined
+      when: running_container_info.ansible_facts.docker_container_info.Name == container_name_start
 
     # - name: Wait for existing container to be stopped
     #   command: "docker wait {{ container_name }}"
