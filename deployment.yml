@@ -27,5 +27,11 @@
       command: "docker stop ansible"
       ignore_errors: yes
 
-    - name: Start the new container
-      command: "docker run --name ansible -d -p 8088:80 pardhuguttula/ansible:{{ DOCKER_TAG }}"
+    
+    - name: Start the container
+      docker_container:
+        name: ansible
+        image: "pardhuguttula/ansible:{{DOCKER_TAG}}"
+        state: started
+        published_ports:
+          - 0.0.0.0:8088:80
