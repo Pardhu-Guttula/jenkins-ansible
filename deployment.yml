@@ -59,12 +59,12 @@
     # - name: Start the new container
     #   command: "docker run --name {{ container_name }} -d -p 8088:80 pardhuguttula/ansible:{{ DOCKER_TAG }}"
 
-    - name: Start the new container
-      command: "docker run --name {{ container_name_start }} -d -p 8088:80 pardhuguttula/ansible:{{ DOCKER_TAG }}"
+    # - name: Start the new container
+    #   command: "docker run --name {{ container_name_start }} -d -p 8088:80 pardhuguttula/ansible:{{ DOCKER_TAG }}"
 
     # - name: Start the new container
     #   docker_container:
-    #     name: "{{ container_name }}"
+    #     name: "{{ container_name_start }}"
     #     image: "pardhuguttula/ansible:{{DOCKER_TAG}}"
     #     state: started
     #     published_ports:
