@@ -2,13 +2,13 @@
 - hosts: dev
   become: True
   tasks:
-    - name: Update package cache
-      apt:
-        update_cache: yes
-    - name: Install python pip
-      apt:
-        name: python3-pip
-        state: present
+    # - name: Update package cache
+    #   apt:
+    #     update_cache: yes
+    # - name: Install python pip
+    #   apt:
+    #     name: python3-pip
+    #     state: present
     # - name: Install docker
     #   apt:
     #     name: docker
@@ -18,10 +18,20 @@
     #     name: docker  
     #     state: started
     #     enabled: yes
-    - name: Install docker-py python module
-      pip:
-        name: docker-py
-        state: present
+    # - name: Install docker-py python module
+    #   pip:
+    #     name: docker-py
+    #     state: present
+
+    - name: List all Docker containers
+      command: "docker ps -a"
+      register: docker_containers
+
+    - name: Debug information about Docker containers
+      debug:
+        var: docker_containers.stdout_lines
+
+
 
     # - name: Generate unique container name
     #   set_fact:
