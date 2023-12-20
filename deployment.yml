@@ -44,7 +44,7 @@
 
     - name: Start the new container
       docker_container:
-        name: ansible
+        name: {{ container_name }}
         image: "pardhuguttula/ansible:{{DOCKER_TAG}}"
         state: started
         published_ports:
