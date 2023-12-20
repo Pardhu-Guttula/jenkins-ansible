@@ -32,8 +32,9 @@
         container_name_start: "ansible_{{ DOCKER_TAG }}"
 
     - name: Get the name of the running container
-      command: "docker ps --format '{{.Names}}' --filter 'name={{ container_name_start }}' | head -n 1"
-      register: running_container_name
+      docker_container_info:
+        name: "{{ container_name_start }}"
+      register: running_container_info
       ignore_errors: true
 
     # - name: Stop existing container
@@ -62,10 +63,10 @@
     # - name: Start the new container
     #   command: "docker run --name {{ container_name_start }} -d -p 8088:80 pardhuguttula/ansible:{{ DOCKER_TAG }}"
 
-    # - name: Start the new container
-    #   docker_container:
-    #     name: "{{ container_name_start }}"
-    #     image: "pardhuguttula/ansible:{{DOCKER_TAG}}"
-    #     state: started
-    #     published_ports:
-    #       - 0.0.0.0:8088:80
+    - name: Start the new container
+      docker_container:
+        name: "{{ container_name_start }}"
+        image: "pardhuguttula/ansible:{{DOCKER_TAG}}"
+        state: started
+        published_ports:
+          - 0.0.0.0:8088:80
