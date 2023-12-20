@@ -23,9 +23,9 @@
     #     name: docker-py
     #     state: present
 #############################################################################################
-    # - name: List all Docker containers
-    #   command: "docker ps -a"
-    #   register: docker_containers
+    - name: List all Docker containers
+      command: "docker ps -a"
+      register: docker_containers
 
     # - name: Debug information about Docker containers
     #   debug:
