@@ -23,9 +23,18 @@
         name: docker-py
         state: present
 
-    - name: Generate unique container name
+    # - name: Generate unique container name
+    #   set_fact:
+    #     container_name: "ansible_{{ DOCKER_TAG }}"
+
+    - name: Generate unique container name for starting
       set_fact:
-        container_name: "ansible_{{ DOCKER_TAG }}"
+        container_name_start: "ansible_{{ DOCKER_TAG }}"
+
+    - name: Get the name of the running container
+      command: "docker ps --format '{{.Names}}' --filter 'name={{ container_name_start }}' | head -n 1"
+      register: running_container_name
+      ignore_errors: true
 
     # - name: Stop existing container
     #   command: "docker stop ansible{{DOCKER_TAG}}"
@@ -35,17 +44,28 @@
     #   command: "docker stop {{ container_name }}"
     #   ignore_errors: yes
     
+    - name: Stop existing container
+      command: "docker stop {{ running_container_name.stdout }}"
+      when: running_container_name.stdout is defined
+
     # - name: Wait for existing container to be stopped
     #   command: "docker wait {{ container_name }}"
     #   ignore_errors: yes
+
+    - name: Wait for existing container to be stopped
+      command: "docker wait {{ running_container_name.stdout }}"
+      when: running_container_name.stdout is defined
 
     # - name: Start the new container
     #   command: "docker run --name {{ container_name }} -d -p 8088:80 pardhuguttula/ansible:{{ DOCKER_TAG }}"
 
     - name: Start the new container
-      docker_container:
-        name: "{{ container_name }}"
-        image: "pardhuguttula/ansible:{{DOCKER_TAG}}"
-        state: started
-        published_ports:
-          - 0.0.0.0:8088:80
+      command: "docker run --name {{ container_name_start }} -d -p 8088:80 pardhuguttula/ansible:{{ DOCKER_TAG }}"
+
+    # - name: Start the new container
+    #   docker_container:
+    #     name: "{{ container_name }}"
+    #     image: "pardhuguttula/ansible:{{DOCKER_TAG}}"
+    #     state: started
+    #     published_ports:
+    #       - 0.0.0.0:8088:80
