@@ -22,6 +22,12 @@
       pip:
         name: docker-py
         state: present
+    
+    - name: Stop existing container
+      docker_container:
+        name: ansible
+        state: stopped
+      ignore_errors: yes
       
     - name: Start the container
       docker_container:
