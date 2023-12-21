@@ -11,7 +11,6 @@ then
     docker stop ${CONTAINER_ID}
     echo "Container stopped."
 fi
-#!/bin/bash
 
 # Get the ID of the most recently created container
 CONTAINER_ID=$(docker ps -lq)
