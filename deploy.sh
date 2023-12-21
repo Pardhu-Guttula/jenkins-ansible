@@ -24,6 +24,9 @@ then
     docker stop ${CONTAINER_ID}
     echo "Container stopped."
 fi
+
+
+# install jq
 # Define the Docker image name
 DOCKER_IMAGE="pardhuguttula/ansible"
 DOCKER_TAG=$(curl -s "https://hub.docker.com/v2/repositories/${DOCKER_IMAGE}/tags/" | jq -r '.results[0].name')
