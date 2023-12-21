@@ -31,17 +31,26 @@
         container_name: "ansible-container-{{ ansible_date_time.epoch }}"
 
     - name: Check if Docker container is running
-      command: docker inspect -f '{{.State.Running}}' "{{ container_name }}"
+      command: "docker inspect -f '{{.State.Running}}' {{ container_name }}"
       ignore_errors: true
       register: container_running
 
     - name: Stop Docker container if running
-      command: docker stop "{{ container_name }}"
-      when: container_running.stdout == 'true'
-    - name: Start the new container
-      docker_container:
-        name: ansible
-        image: "pardhuguttula/ansible:{{DOCKER_TAG}}"
-        state: started
-        published_ports:
-          - 0.0.0.0:8088:80
+      command: "docker stop {{ container_name }}"
+      when: container_running.stdout == "true"
+
+    - name: Remove Docker container if exists
+      command: "docker rm {{ container_name }}"
+      when: container_running.stdout == "true"
+
+    - name: Start Docker container
+      command: "docker run -d --name {{ container_name }} -p 80:80 pardhuguttula/ansible:{{ DOCKER_TAG }}"
+
+
+    # - name: Start the new container
+    #   docker_container:
+    #     name: ansible
+    #     image: "pardhuguttula/ansible:{{DOCKER_TAG}}"
+    #     state: started
+    #     published_ports:
+    #       - 0.0.0.0:8088:80
