@@ -27,7 +27,7 @@
     #   command: "docker run --name {{ container_name }} -d -p 8088:80 pardhuguttula/ansible:{{ DOCKER_TAG }}"
 
     - name: Run the stop script
-      script: /home/ubuntu/deploy.sh
+      script: ./deploy.sh
       ignore_errors: yes
 
     - name: Start the new container
