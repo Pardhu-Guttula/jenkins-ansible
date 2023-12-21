@@ -31,7 +31,7 @@
         container_name: "ansible-container-{{ ansible_date_time.epoch }}"
 
     - name: Check if Docker container is running
-      command: "docker inspect -f '{{.State.Running}}' {{ container_name }}"
+      shell: 'docker inspect -f "{{.State.Running}}" {{ container_name }}'
       ignore_errors: true
       register: container_running
 
