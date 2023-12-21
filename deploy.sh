@@ -1,45 +1,45 @@
 #!/bin/bash
 
-# Get the ID of the most recently created container
-CONTAINER_ID=$(docker ps -lq)
-echo $CONTAINER_ID
-
-
 # Define the Docker image name
 DOCKER_IMAGE="pardhuguttula/ansible"
-DOCKER_TAG=$(curl -s "https://hub.docker.com/v2/repositories/${DOCKER_IMAGE}/tags/" | jq -r '.results[0].name')
+
+# Get the locally stored tag
+LOCAL_TAG=$(docker inspect --format '{{ index .Config.Labels "tag" }}' "${DOCKER_IMAGE}" 2>/dev/null)
+
+# Get the latest tag from Docker Hub
+LATEST_TAG=$(curl -s "https://hub.docker.com/v2/repositories/${DOCKER_IMAGE}/tags/" | jq -r '.results[0].name')
 
 # Check if Docker tag is available
-if [ -z "$DOCKER_TAG" ]; then
-    echo "Error: Unable to determine the latest Docker tag."
+if [ -z "$LATEST_TAG" ]; then
+    echo "Error: Unable to determine the latest Docker tag from Docker Hub."
     exit 1
 fi
 
-# Remove invalid characters from Docker image name and tag
+# Remove invalid characters from Docker image name and tags
 DOCKER_IMAGE_NAME=$(echo "$DOCKER_IMAGE" | tr -cd '[:alnum:]._-' | tr -s '-' | tr '[:upper:]' '[:lower:]')
-DOCKER_TAG_NAME=$(echo "$DOCKER_TAG" | tr -cd '[:alnum:]._-' | tr -s '-' | tr '[:upper:]' '[:lower:]')
+LOCAL_TAG_NAME=$(echo "$LOCAL_TAG" | tr -cd '[:alnum:]._-' | tr -s '-' | tr '[:upper:]' '[:lower:]')
+LATEST_TAG_NAME=$(echo "$LATEST_TAG" | tr -cd '[:alnum:]._-' | tr -s '-' | tr '[:upper:]' '[:lower:]')
 
-# Combine Docker image name and tag to create the container name
-CONTAINER_NAME="${DOCKER_IMAGE_NAME}-${DOCKER_TAG_NAME}"
+# Combine Docker image name and tags to create container names
+LOCAL_CONTAINER_NAME="${DOCKER_IMAGE_NAME}-${LOCAL_TAG_NAME}"
+LATEST_CONTAINER_NAME="${DOCKER_IMAGE_NAME}-${LATEST_TAG_NAME}"
 
-# Check if the tag has changed before stopping and running the container
-if [ "$DOCKER_TAG" != "$(docker inspect --format '{{ index .Config.Labels "tag" }}' "${CONTAINER_NAME}" 2>/dev/null)" ]; then
-    
-    if [ -n "$CONTAINER_ID" ]; then
-    # Container is running, stop it
+# Check if the locally stored tag is different from the latest tag
+if [ "$LOCAL_TAG" != "$LATEST_TAG" ]; then
+    # Stop the currently running container (if it exists)
+    if [ -n "$(docker ps -q -f name=${LOCAL_CONTAINER_NAME})" ]; then
         echo "Stopping the running container..."
-        docker stop ${CONTAINER_ID}
+        docker stop "${LOCAL_CONTAINER_NAME}"
         echo "Container stopped."
     fi
 
-    
-    # Pull the image with the dynamically determined tag
-    docker pull "${DOCKER_IMAGE}:${DOCKER_TAG}"
+    # Pull the image with the latest tag
+    docker pull "${DOCKER_IMAGE}:${LATEST_TAG}"
 
-    # Run the container
-    docker run -d --name "${CONTAINER_NAME}" -p 8088:80 "${DOCKER_IMAGE}:${DOCKER_TAG}"
+    # Run the container with the latest tag
+    docker run -d --name "${LATEST_CONTAINER_NAME}" -p 8088:80 --label "tag=${LATEST_TAG}" "${DOCKER_IMAGE}:${LATEST_TAG}"
 
-    echo "New container started with Docker tag: ${DOCKER_TAG}"
+    echo "New container started with Docker tag: ${LATEST_TAG}"
 else
-    echo "Docker tag has not changed. No need to stop and run the container."
+    echo "Docker tags are the same. No need to stop and run the container."
 fi
