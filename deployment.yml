@@ -22,62 +22,22 @@
     #   pip:
     #     name: docker-py
     #     state: present
-#############################################################################################
-    # - name: List all Docker containers
-    #   command: "docker ps -a"
-    #   register: docker_containers
-
-    # - name: Debug information about Docker containers
-    #   debug:
-    #     var: docker_containers.stdout_lines
-
-############################################################################################
-
-    # - name: Generate unique container name for starting
-    #   set_fact:
-    #     container_name_start: "ansible_{{ DOCKER_TAG }}"
-
-    # - name: Get the name of the running container
-    #   docker_container_info:
-    #     name: "{{ container_name_start }}"
-    #   register: running_container_info
-    #   ignore_errors: true
-
-    # - name: Stop existing container
-    #   command: "docker stop ansible{{DOCKER_TAG}}"
-    #   ignore_errors: yes
-
-    # - name: Stop existing container
-    #   command: "docker stop {{ container_name }}"
-    #   ignore_errors: yes
-    # - name: Debug information about running_container_info
-    #   debug:
-    #     var: running_container_info
-
-
-    # - name: Stop existing container
-    #   command: "docker stop {{ running_container_info.ansible_facts.docker_container_info.Id }}"
-    #   when: running_container_info.ansible_facts.docker_container_info.Name == container_name_start
-
-    # - name: Stop existing container
-    #   command: "docker stop {{ item.split()[-1] }}"
-    #   with_items: "{{ docker_containers.stdout_lines[1:] }}"
-    #   when: item.split()[-1] == container_name_start
-
-    # - name: Wait for existing container to be stopped
-    #   command: "docker wait {{ container_name }}"
-    #   ignore_errors: yes
-
-    # - name: Wait for existing container to be stopped
-    #   command: "docker wait {{ running_container_name.stdout }}"
-    #   when: running_container_name.stdout is defined
 
     # - name: Start the new container
     #   command: "docker run --name {{ container_name }} -d -p 8088:80 pardhuguttula/ansible:{{ DOCKER_TAG }}"
 
-    # - name: Start the new container
-    #   command: "docker run --name {{ container_name_start }} -d -p 8088:80 pardhuguttula/ansible:{{ DOCKER_TAG }}"
+    - name: Generate unique container name
+      set_fact:
+        container_name: "ansible-container-{{ ansible_date_time.epoch }}"
 
+    - name: Check if Docker container is running
+      command: docker inspect -f '{{.State.Running}}' "{{ container_name }}"
+      ignore_errors: true
+      register: container_running
+
+    - name: Stop Docker container if running
+      command: docker stop "{{ container_name }}"
+      when: container_running.stdout == 'true'
     - name: Start the new container
       docker_container:
         name: ansible
