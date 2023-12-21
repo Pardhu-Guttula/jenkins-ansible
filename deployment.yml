@@ -27,8 +27,13 @@
     #   command: "docker run --name {{ container_name }} -d -p 8088:80 pardhuguttula/ansible:{{ DOCKER_TAG }}"
 
     - name: Run the stop script
-      script: ./deploy.sh
+      script: ./deploy.sh  # Assuming deploy.sh is in the same directory as the playbook
       ignore_errors: yes
+      register: script_output
+
+    - name: Display script output
+      debug:
+        var: script_output.stdout_lines
 
     - name: Start the new container
       docker_container:
