@@ -4,23 +4,6 @@
 CONTAINER_ID=$(docker ps -lq)
 echo $CONTAINER_ID
 
-if [ -n "$CONTAINER_ID" ]; then
-    # Container is running, stop it
-    echo "Stopping the running container..."
-    docker stop ${CONTAINER_ID}
-    echo "Container stopped."
-fi
-
-# Get the ID of the most recently created container
-CONTAINER_ID=$(docker ps -lq)
-echo $CONTAINER_ID
-
-if [ -n "$CONTAINER_ID" ]; then
-    # Container is running, stop it
-    echo "Stopping the running container..."
-    docker stop ${CONTAINER_ID}
-    echo "Container stopped."
-fi
 
 # Define the Docker image name
 DOCKER_IMAGE="pardhuguttula/ansible"
@@ -41,6 +24,15 @@ CONTAINER_NAME="${DOCKER_IMAGE_NAME}-${DOCKER_TAG_NAME}"
 
 # Check if the tag has changed before stopping and running the container
 if [ "$DOCKER_TAG" != "$(docker inspect --format '{{ index .Config.Labels "tag" }}' "${CONTAINER_NAME}" 2>/dev/null)" ]; then
+    
+    if [ -n "$CONTAINER_ID" ]; then
+    # Container is running, stop it
+        echo "Stopping the running container..."
+        docker stop ${CONTAINER_ID}
+        echo "Container stopped."
+    fi
+
+    
     # Pull the image with the dynamically determined tag
     docker pull "${DOCKER_IMAGE}:${DOCKER_TAG}"
 
