@@ -28,8 +28,10 @@ fi
 DOCKER_IMAGE="pardhuguttula/ansible"
 DOCKER_TAG=$(curl -s "https://hub.docker.com/v2/repositories/${DOCKER_IMAGE}/tags/" | jq -r '.results[0].name')
 
-DOCKER_IMAGE_NAME="${DOCKER_IMAGE//_/}"
-DOCKER_TAG_NAME="${DOCKER_TAG//_/}"
+# Remove invalid characters from Docker image name and tag
+DOCKER_IMAGE_NAME=$(echo "$DOCKER_IMAGE" | tr -cd '[:alnum:]._-' | tr -s '-' | tr '[:upper:]' '[:lower:]')
+DOCKER_TAG_NAME=$(echo "$DOCKER_TAG" | tr -cd '[:alnum:]._-' | tr -s '-' | tr '[:upper:]' '[:lower:]')
+
 # Combine Docker image name and tag to create the container name
 CONTAINER_NAME="${DOCKER_IMAGE_NAME}-${DOCKER_TAG_NAME}"
 
