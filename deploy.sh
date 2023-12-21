@@ -11,6 +11,3 @@ then
     docker stop ${CONTAINER_ID}
     echo "Container stopped."
 fi
-
-docker pull pardhuguttula/ansible:$DOCKER_TAG
-docker run -d --name ansible -p 8088:80 pardhuguttula/ansible:$DOCKER_TAG
