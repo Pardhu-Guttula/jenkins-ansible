@@ -27,11 +27,11 @@ fi
 # Define the Docker image name
 DOCKER_IMAGE="pardhuguttula/ansible"
 DOCKER_TAG=$(curl -s "https://hub.docker.com/v2/repositories/${DOCKER_IMAGE}/tags/" | jq -r '.results[0].name')
-
+CONTAINER_NAME="${DOCKER_IMAGE}_${DOCKER_TAG}"
 # Pull the image with the dynamically determined tag
 docker pull "${DOCKER_IMAGE}:${DOCKER_TAG}"
 
 # Run the container
-docker run -d --name ansible -p 8088:80 "${DOCKER_IMAGE}:${DOCKER_TAG}"
+docker run -d --name "${CONTAINER_NAME}" -p 8088:80 "${DOCKER_IMAGE}:${DOCKER_TAG}"
 
 echo "New container started with Docker tag: ${DOCKER_TAG}"
