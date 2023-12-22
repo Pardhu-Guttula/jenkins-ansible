@@ -26,11 +26,9 @@ LATEST_CONTAINER_NAME="${DOCKER_IMAGE_NAME}-${LATEST_TAG_NAME}"
 
 # Check if the locally stored tag is different from the latest tag
 if [ "$LOCAL_TAG" != "$LATEST_TAG" ]; then
-    # Stop the currently running container (if it exists)
+    # Stop the currently running container (if it exists) --> if containers are non-empty
     if [ -n "$(docker ps -q -f name=${LOCAL_CONTAINER_NAME})" ]; then
-        echo "Stopping the running container..."
         docker stop "${LOCAL_CONTAINER_NAME}"
-        echo "Container stopped."
     fi
 
     # Pull the image with the latest tag
