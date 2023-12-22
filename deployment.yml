@@ -10,7 +10,8 @@
         name: python3-pip
         state: present
 
-    
+    - name: Include installations script
+      include_tasks: installations.yml
     # - name: Install docker
     #   apt:
     #     name: docker
