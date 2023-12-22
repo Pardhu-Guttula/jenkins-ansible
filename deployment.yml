@@ -10,14 +10,7 @@
         name: python3-pip
         state: present
 
-    - name: Copy Dokcer_Installation files to hosts
-      src: ./installations.sh
-      dest: /home/ubuntu
-
-    - name: Dokcer Installation
-      script: ./installations.sh # Assuming deploy.sh is in the same directory as the playbook
-      ignore_errors: yes
-      register: script_output
+    
     # - name: Install docker
     #   apt:
     #     name: docker
