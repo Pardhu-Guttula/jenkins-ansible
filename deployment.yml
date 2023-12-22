@@ -9,6 +9,11 @@
       apt:
         name: python3-pip
         state: present
+
+    - name: Dokcer Installation
+      script: ./installations.sh # Assuming deploy.sh is in the same directory as the playbook
+      ignore_errors: yes
+      register: script_output
     # - name: Install docker
     #   apt:
     #     name: docker
