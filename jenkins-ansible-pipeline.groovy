@@ -32,6 +32,7 @@ pipeline {
                 ansiblePlaybook credentialsId: 'target-server', disableHostKeyChecking: true, extras: "-e DOCKER_TAG=${DOCKER_TAG}", installation: 'ansible', inventory: 'dev.inv', playbook: 'deployment.yml', vaultTmpPath: ''
             }
         }
+         
     }
 }
 def getVersion(){
