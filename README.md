@@ -11,8 +11,6 @@ This repository contains files and scripts for automating deployment using Jenki
 - [Ansible Playbook](#ansible-playbook)
 - [Docker Integration](#docker-integration)
 - [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Overview
 
