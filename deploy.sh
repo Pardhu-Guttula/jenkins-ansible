@@ -18,7 +18,7 @@ then
 fi
 # Define the Docker image name
 DOCKER_IMAGE="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO_NAME}"
-DOCKER_TAG=$(git rev-parse --short HEAD)
+DOCKER_TAG=$(curl -s "https://api.github.com/repos/Pardhu-Guttula/jenkins-ansible/commits/main" | jq -r '.sha' | cut -c1-7)
 
 # Remove invalid characters from Docker image name and tag
 DOCKER_IMAGE_NAME=$(echo "$DOCKER_IMAGE" | tr -cd '[:alnum:]._-' | tr -s '-' | tr '[:upper:]' '[:lower:]')
