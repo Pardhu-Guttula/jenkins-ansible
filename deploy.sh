@@ -4,8 +4,8 @@ AWS_REGION="us-east-1"
 AWS_ACCOUNT_ID="931916374817"
 ECR_REPO_NAME="jenkins-pipeline"
 
-# Authenticate Docker to the ECR registry
 aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO_NAME
+
 # Get the ID of the most recently created container
 CONTAINER_ID=$(docker ps -lq)
 echo $CONTAINER_ID
@@ -17,8 +17,8 @@ then
     echo "Container stopped."
 fi
 # Define the Docker image name
-DOCKER_IMAGE="pardhuguttula/ansible"
-DOCKER_TAG=$(curl -s "https://hub.docker.com/v2/repositories/${DOCKER_IMAGE}/tags/" | jq -r '.results[0].name')
+DOCKER_IMAGE="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO_NAME}"
+DOCKER_TAG=$(git rev-parse --short HEAD)
 
 # Remove invalid characters from Docker image name and tag
 DOCKER_IMAGE_NAME=$(echo "$DOCKER_IMAGE" | tr -cd '[:alnum:]._-' | tr -s '-' | tr '[:upper:]' '[:lower:]')
