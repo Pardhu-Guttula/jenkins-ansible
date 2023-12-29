@@ -13,6 +13,7 @@ pipeline {
         stage('Logging into AWS'){
             steps{
                 script {
+                    echo "${COMMIT_HASH}"
                     sh "aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
                 }
             }
@@ -28,7 +29,6 @@ pipeline {
         stage('Build docker image') {
             steps {  
                 script {
-                    echo "$IMAGE_TAG"
                     sh 'docker build -t ${REPOSITORY_URI}:${IMAGE_TAG} .'
                 }
             }
@@ -51,7 +51,18 @@ pipeline {
 
     }
 }
-def getVersion(){
-    def commitHash = sh label:'', returnStdout: true, script: 'git rev-parse --short HEAD'
-    return commitHash
+def getVersion() {
+    // Fetch commit hash from GitHub API
+    def githubApiUrl = "https://api.github.com/repos/Pardhu-Guttula/jenkins-ansible/commits/main"
+    def commitHashFromApi = sh(script: "curl -s $githubApiUrl | jq -r '.sha' | cut -c1-7", returnStdout: true).trim()
+
+    // Set COMMIT_HASH and DOCKER_TAG
+    COMMIT_HASH = commitHashFromApi
+    DOCKER_TAG = commitHashFromApi
+
+    // Print COMMIT_HASH (optional)
+    echo "COMMIT_HASH: $COMMIT_HASH"
+
+    // Return COMMIT_HASH
+    return COMMIT_HASH
 }
