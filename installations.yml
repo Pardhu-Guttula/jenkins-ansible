@@ -28,6 +28,7 @@
         - virtualenv
         - python3-setuptools
         - jq
+        - aws cli
       state: latest
       update_cache: true
 
